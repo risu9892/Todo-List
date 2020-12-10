@@ -1,17 +1,83 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(
+class App extends React.Component {
+  state = { tasks: [ ] };
+
+  handleSubmit = task => {
+    this.setState({tasks: [...this.state.tasks, task]});
+  }
+
+  render() { 
+    return ( 
+      <div>
+        <Header numTodos={this.state.tasks.length}/>
+        <TodoList tasks={this.state.tasks}/>
+        <SubmitForm onFormSubmit={this.handleSubmit} />
+      </div>
+     );
+  }
+}
+ 
+const Header = (props) => {
+  return (
+    <h1>
+      You have {props.numTodos} Todos
+    </h1>
+  )
+} 
+
+const TodoList = (props) => {
+  const todos = props.tasks.map((todo, index ) => {
+    return (
+      <Todo content={todo} key={index} id={index} />
+    )
+  })
+  return (
+    <div>
+      {todos}
+    </div>
+  )
+}
+
+const Todo = (props) => {
+  return (
+    <div>
+      {props.content}
+    </div>
+  )
+}
+
+class SubmitForm extends React.Component {
+  state = { term: '' };
+
+  handleSubmit = (e) => {
+    e.preventDefault();
+    if(this.state.task === '') return;
+    this.props.onFormSubmit(this.state.term);
+    this.setState({ term: '' });
+  }
+
+  render() { 
+    return ( 
+      <form onSubmit={this.handleSubmit}>
+        <input
+          type='text'
+          placeholder='Enter Item'
+          value={this.state.term}
+          onChange= {(e) => this.setState({term: e.target.value})}
+        />
+        <button>Submit</button>
+      </form>
+    );
+  }
+}
+ ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+
